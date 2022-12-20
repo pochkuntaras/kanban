@@ -1,0 +1,5 @@
+%{
+  "boundary": {:hex, :boundary, "0.9.4", "11f66efc6deeaae7637252b05c4f80ee73495ed96981038f83c840c0ee9f2755", [:mix], [], "hexpm", "3532aeb49fd2fdcb8f5762f3b1964d89832ef81b224dae2852a8a6dba3dec893"},
+  "finitomata": {:hex, :finitomata, "0.9.1", "ade73a21a8ceb38d1d371773db8a7b66657b52dbb516e410cb673c7644417693", [:mix], [{:boundary, "~> 0.4", [hex: :boundary, repo: "hexpm", optional: false]}, {:nimble_parsec, "~> 1.0", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm", "1b115175804670e531fcbb6591897bde8e05ddce154ff05fd8edf704e00f0d77"},
+  "nimble_parsec": {:hex, :nimble_parsec, "1.2.3", "244836e6e3f1200c7f30cb56733fd808744eca61fd182f731eac4af635cc6d0b", [:mix], [], "hexpm", "c8d789e39b9131acf7b99291e93dae60ab48ef14a7ee9d58c6964f59efb570b0"},
+}
