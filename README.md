@@ -19,3 +19,14 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/kanban>.
 
+## Usage
+```bash
+iex(1)> Kanban.KeyValueStore.start_link(%{a: 'a'})
+{:ok, #PID<0.227.0>}
+iex(2)> GenServer.call(Kanban.KeyValueStore, {:put, :b, 'first'})
+%{a: 'a', b: ['first']}
+iex(3)> GenServer.call(Kanban.KeyValueStore, {:put, :b, 'second'})
+%{a: 'a', b: ['second', 'first']}
+iex(4)> GenServer.call(Kanban.KeyValueStore, {:get, :b})
+['second', 'first']
+```
