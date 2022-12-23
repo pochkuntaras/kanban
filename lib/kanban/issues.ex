@@ -1,11 +1,11 @@
-defmodule Kanban.Projects do
+defmodule Kanban.Issues do
   @moduledoc """
-  The process of projects.
+  The process of Issues.
   """
 
   import Ecto.Changeset
 
-  alias Kanban.Data.{Repo, Project}
+  alias Kanban.Data.{Repo, Issue}
 
   use GenServer, restart: :transient
 
@@ -23,19 +23,18 @@ defmodule Kanban.Projects do
   end
 
   @impl GenServer
-  def handle_cast({:post, %Project{title: title} = project}, _state)
-  when not is_nil(title) do
-    {:ok, state} = project |> Repo.insert
+  def handle_cast({:post, %Issue{} = issue}, _state) do
+    {:ok, state} = issue |> Repo.insert
     {:noreply, state}
   end
 
   @impl GenServer
-  def handle_cast({:put, %{} = params}, %Project{id: _id} = state) do
-    project = change(state, params)
+  def handle_cast({:put, %{} = params}, %Issue{id: _id} = state) do
+    issue = change(state, params)
 
-    case Repo.update(project) do
-      {:ok, struct} -> {:noreply, struct}
-      {:error, _}   -> {:noreply, state}
+    case Repo.update(issue) do
+      {:ok, struct}  -> {:noreply, struct}
+      {:error, _}    -> {:noreply, state}
     end
   end
 
