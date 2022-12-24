@@ -10,6 +10,7 @@ defmodule Kanban.Application do
     children = [
       # Starts a worker by calling: Kanban.Worker.start_link(arg)
       # {Kanban.Worker, arg}
+      Kanban.Data.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

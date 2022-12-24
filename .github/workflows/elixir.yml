@@ -15,6 +15,15 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:14.5
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     strategy:
       matrix:
         elixir: [1.14]
@@ -36,6 +45,12 @@ jobs:
     - name: Install dependencies
       run: mix deps.get
     - name: Run tests
-      run: mix test
+      run: |
+        mix ecto.create
+        mix ecto.migrate
+        mix test
+      env:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
     - name: Run dialyzer
       run: mix dialyzer
