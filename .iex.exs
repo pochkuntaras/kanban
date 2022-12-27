@@ -36,4 +36,4 @@ IEx.configure(
 )
 
 alias Kanban.Data.{Project, Issue, Task, User, Repo}
-alias Kanban.{Projects, Issues, TaskFSM}
+alias Kanban.{Projects, Issues, TaskFSM, ProjectFSM, IssueFSM}

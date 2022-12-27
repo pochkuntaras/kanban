@@ -5,7 +5,7 @@ defmodule ProjectsTest do
   alias Kanban.Data.Project
 
   setup do
-    {:ok, pid} = Kanban.Projects.start_link
+    {:ok, pid} = Kanban.Projects.start_link()
 
     %{pid: pid}
   end

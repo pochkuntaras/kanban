@@ -8,6 +8,7 @@ defmodule Kanban.Data.Project do
   schema "projects" do
     field :title, :string
     field :description, :string
+    field :state, :string
     # has_many :tasks, Task
   end
 

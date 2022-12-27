@@ -18,7 +18,6 @@ defmodule Kanban.Projects do
 
   @impl GenServer
   def handle_call({:get}, _from, state) do
-    IO.inspect({state}, label: "GET")
     {:reply, :ok, state}
   end
 
