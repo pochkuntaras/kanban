@@ -35,5 +35,5 @@ IEx.configure(
     |> IO.chardata_to_string()
 )
 
-alias Kanban.Data.{Project, Issue, Task, User, Repo}
-alias Kanban.{Projects, Issues, TaskFSM}
+alias Kanban.Data.{Project, Issue, Task, User}
+alias Kanban.{Repo, Projects, Issues, TaskFSM, ProjectFSM, IssueFSM, ProjectManager}

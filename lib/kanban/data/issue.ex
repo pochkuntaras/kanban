@@ -10,6 +10,7 @@ defmodule Kanban.Data.Issue do
 
     field :title, :string
     field :description, :string
+    field :state, :string
   end
 
   def changeset(issue, params \\ %{}) do

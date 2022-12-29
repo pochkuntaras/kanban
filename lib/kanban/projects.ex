@@ -5,7 +5,8 @@ defmodule Kanban.Projects do
 
   import Ecto.Changeset
 
-  alias Kanban.Data.{Repo, Project}
+  alias Kanban.{Repo}
+  alias Kanban.Data.{Project}
 
   use GenServer, restart: :transient
 
@@ -18,7 +19,6 @@ defmodule Kanban.Projects do
 
   @impl GenServer
   def handle_call({:get}, _from, state) do
-    IO.inspect({state}, label: "GET")
     {:reply, :ok, state}
   end
 

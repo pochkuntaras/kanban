@@ -1,11 +1,12 @@
 defmodule ProjectsTest do
-  use ExUnit.Case
+  use KanbanWeb.ConnCase
+
   doctest Kanban.Projects
 
   alias Kanban.Data.Project
 
   setup do
-    {:ok, pid} = Kanban.Projects.start_link
+    {:ok, pid} = Kanban.Projects.start_link()
 
     %{pid: pid}
   end

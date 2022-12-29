@@ -26,7 +26,7 @@ iex -S mix
 
 ## Work with Ecto
 ```bash
-mix ecto.gen.repo -r Data.Repo # create repo
+mix ecto.gen.repo -r Kanban.Repo # create repo
 
 mix ecto.create # create database
 
@@ -150,4 +150,101 @@ iex|💧|8 ▶
 DELETE FROM "issues" WHERE "id" = $1 [4]
  
 nil
+```
+
+```bash
+iex|💧|1 ▶ {:ok, pid} = ProjectFSM.start_link(%Project{state: "presale", title: "title"})
+
+20:10:33.116 [debug] QUERY OK db=1.4ms decode=1.0ms queue=0.5ms idle=124.6ms
+INSERT INTO "projects" ("state","title") VALUES ($1,$2) RETURNING "id" ["presale", "title"]
+{:ok, #PID<0.297.0>}
+iex|💧|2 ▶ GenServer.call(pid, :state)
+"presale"
+iex|💧|3 ▶ GenServer.call(pid, {:transition, :start})
+
+20:10:40.906 [debug] QUERY OK db=2.3ms queue=0.9ms idle=1919.4ms
+UPDATE "projects" SET "state" = $1 WHERE "id" = $2 ["developing", 15]
+:ok
+iex|💧|4 ▶ GenServer.call(pid, :state)
+"developing"
+iex|💧|5 ▶ GenServer.call(pid, {:transition, :done})
+
+20:10:49.771 [warning] {:error, {:not_allowed, :done, "developing"}}
+** (exit) exited in: GenServer.call(#PID<0.297.0>, {:transition, :done}, 5000)
+    ** (EXIT) time out
+    (elixir 1.14.0) lib/gen_server.ex:1038: GenServer.call/3
+iex|💧|5 ▶ 
+nil
+iex|💧|6 ▶ GenServer.call(pid, {:transition, :complete})
+
+20:11:01.823 [debug] QUERY OK db=0.8ms idle=1840.2ms
+UPDATE "projects" SET "state" = $1 WHERE "id" = $2 ["support", 15]
+** (exit) exited in: GenServer.call(#PID<0.297.0>, {:transition, :complete}, 5000)
+    ** (EXIT) normal
+```
+
+
+```bash
+iex|💧|1 ▶ {:ok, pid} = IssueFSM.start_link(%Issue{state: "opened", title: "issue1", description: "issue1"})
+
+21:11:42.539 [debug] QUERY OK db=2.0ms decode=1.0ms queue=0.7ms idle=151.5ms
+INSERT INTO "issues" ("description","state","title") VALUES ($1,$2,$3) RETURNING "id" ["issue1", "opened", "issue1"]
+{:ok, #PID<0.295.0>}
+iex|💧|2 ▶ GenServer.call(pid, :state)
+"opened"
+iex|💧|3 ▶ GenServer.call(pid, {:transition, :close})
+
+21:12:00.319 [debug] QUERY OK db=2.1ms queue=1.0ms idle=1937.6ms
+UPDATE "issues" SET "state" = $1 WHERE "id" = $2 ["closed", 25]
+:ok
+iex|💧|4 ▶ GenServer.call(pid, :state)               
+"closed"
+iex|💧|5 ▶ GenServer.call(pid, {:transition, :archive})
+
+21:12:29.440 [debug] QUERY OK db=2.5ms queue=1.1ms idle=1060.1ms
+UPDATE "issues" SET "state" = $1 WHERE "id" = $2 ["archived", 25]
+** (exit) exited in: GenServer.call(#PID<0.295.0>, {:transition, :archive}, 5000)
+    ** (EXIT) normal
+    (elixir 1.14.0) lib/gen_server.ex:1038: GenServer.call/3
+```
+
+```bash
+{:ok, pid} = ProjectFSM.start_link(%Project{state: "presale", title: "Project1"})
+ProjectFSM.start(pid)
+ProjectFSM.complete(pid)
+ProjectFSM.state(pid)
+
+ProjectFSM.start({:via, Registry, {Kanban.ProjectRegistry, "Project1"}})
+ProjectFSM.state({:via, Registry, {Kanban.ProjectRegistry, "Project1"}})
+ProjectFSM.complete({:via, Registry, {Kanban.ProjectRegistry, "Project1"}})
+
+Process.exit pid, :kill # !!!
+
+DynamicSupervisor.which_children Kanban.ProjectManager
+
+ProjectManager.start_project "Project1"
+ProjectManager.start_project "Project2"
+ProjectManager.start_project "Project3"
+
+Kanban.State.state
+
+Kanban.ProjectManager |> DynamicSupervisor.which_children |> Enum.map(fn {_, pid, :worker, [Kanban.ProjectFSM]} -> pid end)
+
+Kanban.ProjectManager |> DynamicSupervisor.which_children |> Enum.map(fn {_, pid, :worker, [Kanban.ProjectFSM]} -> pid end) |> Enum.map(&TaskFSM.state/1)
+
+(1..1_000) |> Enum.map(&"T_#{&1}") |> Enum.map(&ProjectManager.start_project(&1))
+
+DynamicSupervisor.which_children(ProjectManager) |> Enum.count()
+
+Kanban.state_project "T_1"
+Kanban.start_project "T_1"
+```
+
+```bash
+MIX_ENV=test mix ecto.create
+MIX_ENV=test mix ecto.migrate
+```
+
+```bash
+mix phx.server 
 ```

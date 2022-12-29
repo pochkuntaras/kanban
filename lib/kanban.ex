@@ -3,6 +3,8 @@ defmodule Kanban do
   Documentation for `Kanban`.
   """
 
+  alias Kanban.ProjectFSM
+
   @doc """
   Hello world.
 
@@ -15,4 +17,13 @@ defmodule Kanban do
   def hello do
     :world
   end
+
+  def start_project(project_id),
+    do: ProjectFSM.start({:via, Registry, {Kanban.ProjectRegistry, project_id}})
+
+  def state_project(project_id),
+    do: ProjectFSM.state({:via, Registry, {Kanban.ProjectRegistry, project_id}})
+
+  def complete_state(project_id),
+    do: ProjectFSM.complete({:via, Registry, {Kanban.ProjectRegistry, project_id}})
 end
