@@ -244,3 +244,7 @@ Kanban.start_project "T_1"
 MIX_ENV=test mix ecto.create
 MIX_ENV=test mix ecto.migrate
 ```
+
+```bash
+mix phx.server 
+```

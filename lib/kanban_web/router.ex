@@ -21,9 +21,13 @@ defmodule KanbanWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", KanbanWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", KanbanWeb do
+    pipe_through :api
+
+    get "/start_test_projects", ProjectsController, :start_test_projects
+    get "/start_project/:project_id", ProjectsController, :start_project
+    get "/state_project/:project_id", ProjectsController, :state_project
+  end
 
   # Enables LiveDashboard only for development
   #
