@@ -1,5 +1,6 @@
 defmodule KeyValueStoreTest do
-  use ExUnit.Case
+  use KanbanWeb.ConnCase
+
   doctest Kanban.KeyValueStore
 
   test "put" do

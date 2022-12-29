@@ -1,5 +1,6 @@
 defmodule KanbanTest do
-  use ExUnit.Case
+  use KanbanWeb.ConnCase
+
   doctest Kanban
 
   test "greets the world" do

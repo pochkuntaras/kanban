@@ -1,5 +1,6 @@
 defmodule IssuesTest do
-  use ExUnit.Case
+  use KanbanWeb.ConnCase
+
   doctest Kanban.Issues
 
   alias Kanban.Data.Issue

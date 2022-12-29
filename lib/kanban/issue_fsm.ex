@@ -5,7 +5,8 @@ defmodule Kanban.IssueFSM do
 
   import Ecto.Changeset
 
-  alias Kanban.Data.{Repo, Issue}
+  alias Kanban.{Repo}
+  alias Kanban.Data.{Issue}
 
   use GenServer, restart: :transient
 

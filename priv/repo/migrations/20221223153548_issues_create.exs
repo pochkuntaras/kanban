@@ -1,4 +1,4 @@
-defmodule Kanban.Data.Repo.Migrations.IssuesCreate do
+defmodule Kanban.Repo.Migrations.IssuesCreate do
   use Ecto.Migration
 
   def change do

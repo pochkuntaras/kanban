@@ -5,7 +5,8 @@ defmodule Kanban.Projects do
 
   import Ecto.Changeset
 
-  alias Kanban.Data.{Repo, Project}
+  alias Kanban.{Repo}
+  alias Kanban.Data.{Project}
 
   use GenServer, restart: :transient
 

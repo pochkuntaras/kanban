@@ -1,5 +1,5 @@
 defmodule IssueFSM do
-  use ExUnit.Case
+  use KanbanWeb.ConnCase
 
   doctest Kanban.IssueFSM
 

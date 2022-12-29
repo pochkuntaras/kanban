@@ -26,7 +26,7 @@ iex -S mix
 
 ## Work with Ecto
 ```bash
-mix ecto.gen.repo -r Data.Repo # create repo
+mix ecto.gen.repo -r Kanban.Repo # create repo
 
 mix ecto.create # create database
 
@@ -238,4 +238,9 @@ DynamicSupervisor.which_children(ProjectManager) |> Enum.count()
 
 Kanban.state_project "T_1"
 Kanban.start_project "T_1"
+```
+
+```bash
+MIX_ENV=test mix ecto.create
+MIX_ENV=test mix ecto.migrate
 ```
