@@ -207,3 +207,35 @@ UPDATE "issues" SET "state" = $1 WHERE "id" = $2 ["archived", 25]
     ** (EXIT) normal
     (elixir 1.14.0) lib/gen_server.ex:1038: GenServer.call/3
 ```
+
+```bash
+{:ok, pid} = ProjectFSM.start_link(%Project{state: "presale", title: "Project1"})
+ProjectFSM.start(pid)
+ProjectFSM.complete(pid)
+ProjectFSM.state(pid)
+
+ProjectFSM.start({:via, Registry, {Kanban.ProjectRegistry, "Project1"}})
+ProjectFSM.state({:via, Registry, {Kanban.ProjectRegistry, "Project1"}})
+ProjectFSM.complete({:via, Registry, {Kanban.ProjectRegistry, "Project1"}})
+
+Process.exit pid, :kill # !!!
+
+DynamicSupervisor.which_children Kanban.ProjectManager
+
+ProjectManager.start_project "Project1"
+ProjectManager.start_project "Project2"
+ProjectManager.start_project "Project3"
+
+Kanban.State.state
+
+Kanban.ProjectManager |> DynamicSupervisor.which_children |> Enum.map(fn {_, pid, :worker, [Kanban.ProjectFSM]} -> pid end)
+
+Kanban.ProjectManager |> DynamicSupervisor.which_children |> Enum.map(fn {_, pid, :worker, [Kanban.ProjectFSM]} -> pid end) |> Enum.map(&TaskFSM.state/1)
+
+(1..1_000) |> Enum.map(&"T_#{&1}") |> Enum.map(&ProjectManager.start_project(&1))
+
+DynamicSupervisor.which_children(ProjectManager) |> Enum.count()
+
+Kanban.state_project "T_1"
+Kanban.start_project "T_1"
+```

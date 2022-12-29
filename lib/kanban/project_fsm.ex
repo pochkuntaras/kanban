@@ -5,6 +5,7 @@ defmodule Kanban.ProjectFSM do
 
   import Ecto.Changeset
 
+  alias Kanban.State
   alias Kanban.Data.{Repo, Project}
 
   use GenServer, restart: :transient
@@ -13,19 +14,41 @@ defmodule Kanban.ProjectFSM do
 
   def start_link(%Project{title: title} = project)
   when not is_nil(title) do
-    {:ok, project} = project |> Repo.insert
-    GenServer.start_link(__MODULE__, project, name: __MODULE__)
+    {:ok, project} = case Repo.get_by(Project, title: title) do
+      %Project{} = project -> {:ok, project}
+      nil -> project |> Repo.insert
+    end
+
+    GenServer.start_link(__MODULE__, project,
+     name: {:via, Registry, {Kanban.ProjectRegistry, title}})
   end
 
   @impl GenServer
+  @spec init(any) :: {:ok, any}
   def init(state), do: {:ok, state}
+
+  def start(pid),
+   do: GenServer.call(pid, {:transition, :start})
+
+  def complete(pid),
+    do: GenServer.call(pid, {:transition, :complete})
+
+  def state(pid),
+   do: GenServer.call(pid, :state)
+
+  @impl GenServer
+  def terminate(:normal, project),
+    do: State.del(project.title)
 
   @impl GenServer
   def handle_call({:transition, :start}, _from, %Project{id: _id, state: "presale"} = project) do
     project = change(project, %{state: "developing"})
 
     case Repo.update(project) do
-      {:ok, struct} -> {:reply, :ok, struct}
+      {:ok, struct} ->
+        State.put(struct.title, struct.state)
+        IO.inspect({struct.title, struct.state}, label: "START")
+        {:reply, :ok, struct}
       {:error, _}   -> {:reply, project}
     end
   end
@@ -35,7 +58,9 @@ defmodule Kanban.ProjectFSM do
     project = change(project, %{state: "support"})
 
     case Repo.update(project) do
-      {:ok, struct} -> {:stop, :normal, struct}
+      {:ok, struct} ->
+        State.put(struct.title, struct.state)
+        {:stop, :normal, struct}
       {:error, _}   -> {:stop, project}
     end
   end

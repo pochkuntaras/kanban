@@ -10,6 +10,8 @@ defmodule Kanban.Application do
     children = [
       # Starts a worker by calling: Kanban.Worker.start_link(arg)
       # {Kanban.Worker, arg}
+      {Registry, keys: :unique, name: Kanban.ProjectRegistry},
+      Kanban.Main,
       Kanban.Data.Repo
     ]
 
